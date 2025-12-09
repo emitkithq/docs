@@ -1,43 +1,83 @@
-# Mintlify Starter Kit
+# EmitKit Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Official documentation for EmitKit - an event streaming and notification platform focused on awareness, not analysis.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## 🚀 Quick Start
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+### Prerequisites
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+- Node.js 16+
+- Mintlify CLI
 
-## Development
+### Installation
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
+```bash
+# Install Mintlify CLI globally
 npm i -g mint
+
+# Or use the npm script
+npm run install-mintlify
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+### Local Development
 
-```
+```bash
+# Start local development server
 mint dev
+
+# Or use the npm script
+npm run dev
 ```
 
-View your local preview at `http://localhost:3000`.
+Visit `http://localhost:3000` to preview the documentation.
 
-## Publishing changes
+## 📚 Documentation Structure
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+- `/` - Getting started and overview
+- `/quickstart` - Quick start guide
+- `/sdk/*` - TypeScript SDK documentation
+- `/concepts/*` - Core concepts and architecture
+- `/self-hosting/*` - Self-hosting guides
+- `/api-reference/*` - API reference (auto-generated from OpenAPI)
 
-## Need help?
+## 🔄 Syncing OpenAPI Spec
 
-### Troubleshooting
+To update the API reference with the latest production spec:
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+```bash
+npm run sync-openapi
+```
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+This will:
+1. Fetch the latest OpenAPI spec from `https://api.emitkit.com/api/openapi.json`
+2. Preserve custom SDK examples (`x-codeSamples`)
+3. Save the merged result to `api-reference/openapi.json`
+
+See [scripts/README.md](./scripts/README.md) for more details.
+
+## 🚢 Deployment
+
+Changes are automatically deployed to production when pushed to the default branch.
+
+Preview changes using pull requests, which generate a preview link.
+
+## 🛠️ Troubleshooting
+
+- **Mintlify dev isn't running**: Run `mint update` to ensure you have the latest CLI
+- **Page loads as 404**: Make sure you're running in the folder with `docs.json`
+- **OpenAPI sync fails**: Check that `https://api.emitkit.com/api/openapi.json` is accessible
+
+## 📝 Contributing
+
+When updating documentation:
+
+1. Make changes to `.mdx` files
+2. Run `mint dev` to preview locally
+3. If API changes, run `npm run sync-openapi`
+4. Commit and push changes
+
+## 🔗 Links
+
+- [EmitKit Website](https://emitkit.com)
+- [GitHub Repository](https://github.com/emitkit)
+- [Community Discussions](https://github.com/emitkithq/emitkit/discussions)

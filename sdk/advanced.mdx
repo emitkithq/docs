@@ -1,0 +1,33 @@
+---
+title: "Advanced Features"
+description: "Idempotency, retries, and advanced SDK usage"
+---
+
+## Idempotency
+
+Prevent duplicate events with idempotency keys:
+
+```typescript
+const result = await client.events.create(
+  {
+    channelName: 'payments',
+    title: 'Payment Received',
+    metadata: { paymentId: 'pay_123' }
+  },
+  { idempotencyKey: 'payment-pay_123-webhook' }
+);
+
+console.log('Was replayed:', result.wasReplayed);
+```
+
+## Rate Limit Tracking
+
+```typescript
+const result = await client.events.create({...});
+
+console.log(result.rateLimit);
+// Access last known rate limit
+console.log(client.rateLimit);
+```
+
+See [TypeScript SDK](/sdk/typescript) for complete documentation.

@@ -1,0 +1,28 @@
+---
+title: "Error Handling"
+description: "Handle errors and rate limits with the SDK"
+---
+
+## Error Types
+
+The SDK provides type-safe error classes:
+
+```typescript
+import {
+  EmitKitError,
+  RateLimitError,
+  ValidationError
+} from '@emitkit/js';
+
+try {
+  await client.events.create({...});
+} catch (error) {
+  if (error instanceof RateLimitError) {
+    console.log(`Retry in ${error.rateLimit.resetIn}ms`);
+  } else if (error instanceof ValidationError) {
+    console.log('Validation errors:', error.validationErrors);
+  }
+}
+```
+
+See [TypeScript SDK](/sdk/typescript) for complete documentation.

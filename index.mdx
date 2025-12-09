@@ -1,97 +1,175 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to EmitKit"
+description: "Monitor critical product moments with real-time alerts"
 ---
 
-## Setting up
+## What is EmitKit?
 
-Get your documentation site up and running in minutes.
+EmitKit is an open-source event streaming and notification platform that monitors critical product moments. Get instant alerts about signups, cancellations, payments, and other pivotal business events - **awareness, not analysis**.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+Stop constantly checking dashboards. EmitKit keeps you informed about what matters, when it matters.
 
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
   >
-    Edit your docs locally and preview them in real time.
+    Get started in minutes with our quick start guide
   </Card>
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="Self-Hosting"
+    icon="server"
+    href="/self-hosting/overview"
   >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+    Deploy your own EmitKit instance
   </Card>
   <Card
-    title="API documentation"
+    title="TypeScript SDK"
+    icon="code"
+    href="/sdk/typescript"
+  >
+    Official TypeScript/JavaScript SDK with full type safety
+  </Card>
+  <Card
+    title="API Reference"
     icon="terminal"
     href="/api-reference/introduction"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Explore the complete API documentation
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Key Features
 
-Everything you need to create world-class documentation.
+<CardGroup cols={2}>
+  <Card title="Real-Time Alerts" icon="bell">
+    Browser push notifications and mobile PWA support for critical events
+  </Card>
+  <Card title="Channel Organization" icon="hash">
+    Organize events into channels like Slack - payments, signups, cancellations
+  </Card>
+  <Card title="Webhook Triggers" icon="webhook">
+    Automate workflows and integrations when events occur
+  </Card>
+  <Card title="Developer-Friendly" icon="code">
+    TypeScript SDK with autocomplete - setup in under 5 minutes
+  </Card>
+  <Card title="Self-Hostable" icon="server">
+    Deploy on your infrastructure with Vercel or host anywhere
+  </Card>
+  <Card title="Open Source" icon="github">
+    AGPL-3.0 licensed - built on ClickHouse and Tinybird
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
+## Quick Example
+
+```typescript
+import { EmitKit } from '@emitkit/js';
+
+const client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');
+
+// Create an event
+await client.events.create({
+  channelName: 'payments',
+  title: 'Payment Received',
+  description: 'User upgraded to Pro plan',
+  icon: '💰',
+  metadata: {
+    amount: 99.99,
+    currency: 'USD'
+  }
+});
+
+// Identify users with aliases
+await client.identify({
+  user_id: 'user_123',
+  properties: {
+    email: 'john@example.com',
+    name: 'John Doe',
+    plan: 'pro'
+  },
+  aliases: ['john@example.com', 'johndoe']
+});
+```
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Monitor Business-Critical Events">
+    Get instant alerts for signups, trial activations, payment receipts, and cancellations. Stay aware of what's happening in your product without checking dashboards.
+  </Accordion>
+
+  <Accordion title="Eliminate Dashboard Fatigue">
+    Stop constantly refreshing analytics dashboards. EmitKit pushes critical moments to you in real-time via browser or mobile notifications.
+  </Accordion>
+
+  <Accordion title="Automate Workflows">
+    Trigger webhooks when important events occur - send Slack messages, update CRMs, or kick off automation workflows.
+  </Accordion>
+
+  <Accordion title="Team Awareness">
+    Keep your entire team in sync with what's happening. Organize events into channels so everyone sees what matters to them.
+  </Accordion>
+</AccordionGroup>
+
+## Why EmitKit?
+
+<CardGroup cols={3}>
+  <Card title="Awareness, Not Analysis">
+    Focus on critical moments, not comprehensive analytics. Know when important things happen without the noise.
+  </Card>
+  <Card title="Setup in Minutes">
+    Install the SDK, get an API key, and start tracking events. No complex configuration or dashboards to learn.
+  </Card>
+  <Card title="Self-Hosted & Open">
+    Deploy on your infrastructure. Full data ownership. Built on battle-tested tech: ClickHouse, PostgreSQL, SvelteKit.
+  </Card>
+</CardGroup>
+
+## Tech Stack
+
+- **Framework**: [SvelteKit](https://kit.svelte.dev/) with [Svelte 5](https://svelte.dev/)
+- **Database**: PostgreSQL with [Drizzle ORM](https://orm.drizzle.team/)
+- **Event Storage**: [Tinybird](https://www.tinybird.co/) (ClickHouse)
+- **Authentication**: [Better Auth](https://www.better-auth.com/)
+- **UI Components**: [shadcn-svelte](https://www.shadcn-svelte.com/) + [Tailwind CSS](https://tailwindcss.com/)
+
+## Get Started
+
+<CardGroup cols={2}>
   <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
+    title="Quick Start Guide"
+    icon="play"
+    href="/quickstart"
   >
-    Use MDX to style your docs pages.
+    Install the SDK and send your first event in 5 minutes
   </Card>
   <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
+    title="Self-Hosting Guide"
+    icon="server"
+    href="/self-hosting/overview"
   >
-    Add sample code to demonstrate how to use your product.
+    Deploy your own EmitKit instance with our comprehensive guide
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Community & Support
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card
+    title="GitHub"
+    icon="github"
+    href="https://github.com/emitkit"
+  >
+    Star us on GitHub and contribute to the project
+  </Card>
+  <Card
+    title="Discussions"
+    icon="comments"
+    href="https://github.com/emitkithq/emitkit/discussions"
+  >
+    Join the community, ask questions, and share feedback
+  </Card>
+</CardGroup>

@@ -1,0 +1,16 @@
+{
+  "name": "emitkit-docs",
+  "version": "1.0.0",
+  "description": "EmitKit documentation",
+  "private": true,
+  "scripts": {
+    "sync-openapi": "node scripts/sync-openapi.js",
+    "dev": "mintlify dev",
+    "install-mintlify": "npm i -g mintlify"
+  },
+  "keywords": [
+    "emitkit",
+    "documentation",
+    "mintlify"
+  ]
+}

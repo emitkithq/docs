@@ -1,217 +1,1109 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
+    "openapi": "3.1.0",
+    "info": {
+        "title": "EmitKit API",
+        "version": "1.0.0",
+        "description": "Real-time event tracking and notifications API for modern applications.\n\n## Authentication\n\nAll API requests require authentication using an API key in the Authorization header:\n```\nAuthorization: Bearer emitkit_xxxxxxxxxxxxxxxxxxxxx\n```\n\nAPI keys are scoped to organizations and projects. Create API keys in your dashboard.\n\n## Rate Limiting\n\n- Default: 100 requests per minute per API key\n- Rate limit information is returned in response headers:\n  - `X-RateLimit-Limit`: Maximum requests allowed\n  - `X-RateLimit-Remaining`: Remaining requests in current window\n  - `X-RateLimit-Reset`: Unix timestamp when limit resets\n\n## Idempotency\n\nTo safely retry requests without creating duplicates, include an `Idempotency-Key` header:\n```\nIdempotency-Key: payment-123-retry-1\n```\n\nIdempotency keys are valid for 24 hours. Replayed requests return the original response with an `X-Idempotent-Replay: true` header.\n\n## Request IDs\n\nEvery response includes a `requestId` field for debugging and support purposes.\n",
+        "contact": {
+            "name": "EmitKit Support",
+            "url": "https://emitkit.com/support",
+            "email": "hey@emitkit.com"
         },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
+        "license": {
+            "name": "AGPL-3.0",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
         }
-      }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
+    "servers": [
+        {
+            "url": "https://api.emitkit.com",
+            "description": "Production API"
         },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
+        {
+            "url": "http://localhost:5173/api",
+            "description": "Local Development"
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
         }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
+    ],
+    "tags": [
+        {
+            "name": "Events",
+            "description": "Create and manage events"
+        },
+        {
+            "name": "Identity",
+            "description": "Track user identities and aliases"
+        },
+        {
+            "name": "Meta",
+            "description": "API metadata and health checks"
+        }
+    ],
+    "paths": {
+        "/v1/events": {
+            "post": {
+                "summary": "Create Event",
+                "description": "Creates a new event and optionally sends push notifications to connected devices.\n\n## Channel Auto-Creation\n\nIf the specified channel doesn't exist, it will be automatically created.\nThis reduces setup complexity for simple integrations.\n\n## Notifications\n\nSet `notify: true` (default) to send push notifications to devices connected through PWA or browsers that have accepted notifications (e.g., Chrome).\n\n## Display Modes\n\n- `message`: Displayed as a chat-like message\n- `notification`: Displayed as a prominent notification banner\n",
+                "operationId": "createEvent",
+                "tags": [
+                    "Events"
+                ],
+                "x-codeSamples": [
+                    {
+                        "lang": "javascript",
+                        "label": "Create Event",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nconst result = await client.events.create({\n  channelName: 'payments',\n  title: 'Payment Received',\n  description: 'User upgraded to Pro plan',\n  icon: '💰',\n  metadata: {\n    amount: 99.99,\n    currency: 'USD'\n  }\n});\n\nconsole.log('Event created:', result.data.id);"
+                    },
+                    {
+                        "lang": "javascript",
+                        "label": "With User ID",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nawait client.events.create({\n  channelName: 'user-signups',\n  title: 'New User Registered',\n  userId: 'user_123',\n  notify: true,\n  displayAs: 'notification',\n  tags: ['signup', 'onboarding']\n});"
+                    },
+                    {
+                        "lang": "javascript",
+                        "label": "With Idempotency",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nconst result = await client.events.create(\n  {\n    channelName: 'payments',\n    title: 'Payment Received',\n    metadata: { paymentId: 'pay_123' }\n  },\n  { idempotencyKey: 'payment-pay_123-webhook' }\n);\n\n// Check if this was a replay\nconsole.log('Was replayed:', result.wasReplayed);"
+                    },
+                    {
+                        "lang": "bash",
+                        "label": "cURL",
+                        "source": "curl -X POST https://api.emitkit.com/v1/events \\\n  -H \"Authorization: Bearer emitkit_xxxxxxxxxxxxxxxxxxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"channelName\": \"payments\",\n    \"title\": \"Payment Received\",\n    \"description\": \"User upgraded to Pro plan\",\n    \"icon\": \"💰\",\n    \"metadata\": {\n      \"amount\": 99.99,\n      \"currency\": \"USD\"\n    }\n  }'"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Idempotency-Key",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                        },
+                        "description": "Unique key to ensure idempotent request processing.\nPrevents duplicate events from retries or webhook replays.\nValid for 24 hours.\n",
+                        "example": "payment-123-retry-1"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateEventRequest"
+                            },
+                            "examples": {
+                                "basic": {
+                                    "summary": "Basic event",
+                                    "value": {
+                                        "channelName": "general",
+                                        "title": "Test notification",
+                                        "description": "This is a test event",
+                                        "icon": "\ud83d\udcdd",
+                                        "notify": true
+                                    }
+                                },
+                                "payment": {
+                                    "summary": "Payment event",
+                                    "value": {
+                                        "channelName": "payments",
+                                        "title": "Payment Received",
+                                        "description": "User upgraded to Pro plan",
+                                        "icon": "\ud83d\udcb0",
+                                        "tags": [
+                                            "payment",
+                                            "upgrade"
+                                        ],
+                                        "metadata": {
+                                            "amount": 99.99,
+                                            "currency": "USD",
+                                            "plan": "pro",
+                                            "userId": "user_123",
+                                            "transactionId": "txn_abc123"
+                                        },
+                                        "userId": "user_123",
+                                        "notify": true,
+                                        "displayAs": "notification"
+                                    }
+                                },
+                                "userSignup": {
+                                    "summary": "User signup event",
+                                    "value": {
+                                        "channelName": "user-signups",
+                                        "title": "New User Registered",
+                                        "description": "A new user has signed up for your application",
+                                        "icon": "\ud83d\udc4b",
+                                        "tags": [
+                                            "signup",
+                                            "onboarding",
+                                            "new-user"
+                                        ],
+                                        "metadata": {
+                                            "email": "user@example.com",
+                                            "plan": "free",
+                                            "source": "organic",
+                                            "referrer": "google"
+                                        },
+                                        "userId": "user_456",
+                                        "notify": true,
+                                        "displayAs": "message"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Event created successfully",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Maximum requests allowed in the current time window",
+                                "example": 100
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Remaining requests in current window",
+                                "example": 95
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                "description": "Unix timestamp (seconds) when the rate limit resets",
+                                "example": 1733270400
+                            },
+                            "X-Idempotent-Replay": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "true"
+                                    ]
+                                },
+                                "description": "Present only when returning a cached idempotent response"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateEventResponse"
+                                },
+                                "examples": {
+                                    "success": {
+                                        "summary": "Successful response",
+                                        "value": {
+                                            "success": true,
+                                            "data": {
+                                                "id": "event_xxxxxxxxxxxxxxxxxxxxx",
+                                                "channelId": "ch_xxxxxxxxxxxxxxxxxxxxx",
+                                                "channelName": "payments",
+                                                "title": "Payment Received",
+                                                "createdAt": "2025-01-15T10:30:00.000Z"
+                                            },
+                                            "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - request body is malformed or missing required fields",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                },
+                                "examples": {
+                                    "missingChannel": {
+                                        "summary": "Missing channelName",
+                                        "value": {
+                                            "success": false,
+                                            "error": "Validation error",
+                                            "details": [
+                                                {
+                                                    "path": [
+                                                        "channelName"
+                                                    ],
+                                                    "message": "Required"
+                                                }
+                                            ],
+                                            "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                        }
+                                    },
+                                    "invalidTitle": {
+                                        "summary": "Title too long",
+                                        "value": {
+                                            "success": false,
+                                            "error": "Validation error",
+                                            "details": [
+                                                {
+                                                    "path": [
+                                                        "title"
+                                                    ],
+                                                    "message": "String must contain at most 500 character(s)"
+                                                }
+                                            ],
+                                            "requestId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid API key",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                },
+                                "examples": {
+                                    "missingAuth": {
+                                        "summary": "Missing Authorization header",
+                                        "value": {
+                                            "error": "Unauthorized",
+                                            "message": "Invalid or missing authentication credentials"
+                                        }
+                                    },
+                                    "invalidKey": {
+                                        "summary": "Invalid API key",
+                                        "value": {
+                                            "error": "Unauthorized",
+                                            "message": "Invalid or missing authentication credentials"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
+        },
+        "/v1/identify": {
+            "post": {
+                "summary": "Identify User",
+                "description": "Creates or updates a user identity with custom properties and aliases.\n\n## User Identity\n\nUser identities store custom properties about your users (email, name, plan, etc.)\nand allow you to track events by user ID.\n\n## Aliases\n\nAliases let you reference the same user by multiple identifiers:\n- Email addresses\n- Usernames\n- External system IDs\n- Social media handles\n\n## Idempotency\n\nUser identity creation is naturally idempotent. Calling identify multiple times\nfor the same userId will update the properties without creating duplicates.\n\n## Property Merging\n\nProperties are **replaced** on each identify call, not merged. Include all\nproperties you want to keep.\n",
+                "operationId": "identifyUser",
+                "tags": [
+                    "Identity"
+                ],
+                "x-codeSamples": [
+                    {
+                        "lang": "javascript",
+                        "label": "Identify User",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nawait client.identify({\n  user_id: 'user_123',\n  properties: {\n    email: 'john@example.com',\n    name: 'John Doe',\n    plan: 'pro'\n  },\n  aliases: ['john@example.com', 'johndoe']\n});"
+                    },
+                    {
+                        "lang": "javascript",
+                        "label": "Update Properties",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\n// Properties are replaced, not merged\nawait client.identify({\n  user_id: 'user_123',\n  properties: {\n    email: 'john@example.com',\n    plan: 'enterprise',\n    seats: 50,\n    upgradeDate: '2025-01-20'\n  }\n});"
+                    },
+                    {
+                        "lang": "javascript",
+                        "label": "Use Aliases in Events",
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\n// First, create aliases\nawait client.identify({\n  user_id: 'user_123',\n  properties: { email: 'john@example.com' },\n  aliases: ['john@example.com', 'johndoe']\n});\n\n// Then use aliases in events - automatically resolved!\nawait client.events.create({\n  channelName: 'user-activity',\n  title: 'User Logged In',\n  userId: 'john@example.com',  // ← Alias works!\n  metadata: { ip: '192.168.1.1' }\n});"
+                    },
+                    {
+                        "lang": "bash",
+                        "label": "cURL",
+                        "source": "curl -X POST https://api.emitkit.com/v1/identify \\\n  -H \"Authorization: Bearer emitkit_xxxxxxxxxxxxxxxxxxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"user_id\": \"user_123\",\n    \"properties\": {\n      \"email\": \"john@example.com\",\n      \"name\": \"John Doe\",\n      \"plan\": \"pro\"\n    },\n    \"aliases\": [\n      \"john@example.com\",\n      \"johndoe\"\n    ]\n  }'"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IdentifyUserRequest"
+                            },
+                            "examples": {
+                                "basic": {
+                                    "summary": "Basic user identification",
+                                    "value": {
+                                        "user_id": "user_123",
+                                        "properties": {
+                                            "email": "john@example.com",
+                                            "name": "John Doe",
+                                            "plan": "pro"
+                                        }
+                                    }
+                                },
+                                "withAliases": {
+                                    "summary": "User with multiple aliases",
+                                    "value": {
+                                        "user_id": "user_456",
+                                        "properties": {
+                                            "email": "jane@example.com",
+                                            "name": "Jane Smith",
+                                            "plan": "free",
+                                            "signupDate": "2025-01-15"
+                                        },
+                                        "aliases": [
+                                            "jane@example.com",
+                                            "janesmith",
+                                            "jane.smith@company.com"
+                                        ]
+                                    }
+                                },
+                                "updateProperties": {
+                                    "summary": "Update user properties",
+                                    "value": {
+                                        "user_id": "user_123",
+                                        "properties": {
+                                            "plan": "enterprise",
+                                            "seats": 50,
+                                            "upgradeDate": "2025-01-20"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User identified successfully (created or updated)",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Maximum requests allowed in the current time window",
+                                "example": 100
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Remaining requests in current window",
+                                "example": 95
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                "description": "Unix timestamp (seconds) when the rate limit resets",
+                                "example": 1733270400
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IdentifyUserResponse"
+                                },
+                                "examples": {
+                                    "success": {
+                                        "summary": "Successful identification",
+                                        "value": {
+                                            "success": true,
+                                            "data": {
+                                                "id": "user_identity_xxxxxxxxxxxxxxxxxxxxx",
+                                                "userId": "user_123",
+                                                "properties": {
+                                                    "email": "john@example.com",
+                                                    "name": "John Doe",
+                                                    "plan": "pro"
+                                                },
+                                                "aliases": {
+                                                    "created": [
+                                                        "john@example.com",
+                                                        "johndoe"
+                                                    ]
+                                                },
+                                                "updatedAt": "2025-01-15T10:30:00.000Z"
+                                            },
+                                            "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                        }
+                                    },
+                                    "partialAliasFailure": {
+                                        "summary": "Some aliases failed (duplicate)",
+                                        "value": {
+                                            "success": true,
+                                            "data": {
+                                                "id": "user_identity_xxxxxxxxxxxxxxxxxxxxx",
+                                                "userId": "user_456",
+                                                "properties": {
+                                                    "email": "jane@example.com",
+                                                    "name": "Jane Smith"
+                                                },
+                                                "aliases": {
+                                                    "created": [
+                                                        "janesmith"
+                                                    ],
+                                                    "failed": [
+                                                        {
+                                                            "alias": "jane@example.com",
+                                                            "reason": "Alias already exists"
+                                                        }
+                                                    ]
+                                                },
+                                                "updatedAt": "2025-01-15T10:31:00.000Z"
+                                            },
+                                            "requestId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - request body is malformed or missing required fields",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                },
+                                "examples": {
+                                    "missingUserId": {
+                                        "summary": "Missing user_id",
+                                        "value": {
+                                            "success": false,
+                                            "error": "Validation error",
+                                            "details": [
+                                                {
+                                                    "path": [
+                                                        "user_id"
+                                                    ],
+                                                    "message": "User ID is required"
+                                                }
+                                            ],
+                                            "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid API key",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer",
+                                    "enum": [
+                                        0
+                                    ]
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "headers": {
+                            "X-RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/openapi.json": {
+            "get": {
+                "summary": "Get OpenAPI Specification",
+                "description": "Returns the OpenAPI 3.1 specification for this API in JSON format",
+                "operationId": "getOpenApiSpec",
+                "tags": [
+                    "Meta"
+                ],
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "OpenAPI specification",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "API Key",
+                "description": "API key authentication. Format: `emitkit_xxxxxxxxxxxxxxxxxxxxx`\n\nCreate API keys in your EmitKit dashboard. Keys are scoped to a specific\norganization and project.\n"
+            }
+        },
+        "schemas": {
+            "CreateEventRequest": {
+                "type": "object",
+                "required": [
+                    "channelName",
+                    "title"
+                ],
+                "properties": {
+                    "channelName": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255,
+                        "description": "Channel name for organizing events. Channels are automatically created\nif they don't exist. Use kebab-case for consistency (e.g., 'user-signups').\n",
+                        "example": "payments"
+                    },
+                    "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500,
+                        "description": "Event title - the main message",
+                        "example": "Payment Received"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 5000,
+                        "description": "Optional detailed description",
+                        "example": "User upgraded to Pro plan"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "description": "Single emoji icon to display with the event",
+                        "example": "\ud83d\udcb0"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 50
+                        },
+                        "maxItems": 20,
+                        "description": "Array of tags for filtering and organization",
+                        "example": [
+                            "payment",
+                            "upgrade"
+                        ]
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "Custom JSON metadata. Any valid JSON structure is accepted.\nUse this to attach custom data to events for filtering or display.\n",
+                        "example": {
+                            "amount": 99.99,
+                            "currency": "USD",
+                            "plan": "pro",
+                            "userId": "user_123"
+                        }
+                    },
+                    "userId": {
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 255
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Optional user identifier to associate with this event.\nSupports both direct user IDs and aliases (email, username, etc.)\ncreated via the /v1/identify endpoint. Aliases are automatically\nresolved to canonical user IDs.\n",
+                        "example": "user_123"
+                    },
+                    "notify": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Whether to send push notifications to connected devices (PWA or browsers with accepted notifications).\nSet to false for silent event logging.\n"
+                    },
+                    "displayAs": {
+                        "type": "string",
+                        "enum": [
+                            "message",
+                            "notification"
+                        ],
+                        "description": "How the event should be displayed in the UI:\n- `message`: Chat-like message format\n- `notification`: Prominent notification banner\n",
+                        "example": "notification"
+                    },
+                    "source": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Identifier for the source system that created this event",
+                        "example": "webhook",
+                        "default": "api"
+                    }
+                }
+            },
+            "CreateEventResponse": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "data",
+                    "requestId"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "description": "Indicates successful event creation",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "channelId",
+                            "channelName",
+                            "title",
+                            "createdAt"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Unique event identifier",
+                                "example": "event_xxxxxxxxxxxxxxxxxxxxx"
+                            },
+                            "channelId": {
+                                "type": "string",
+                                "description": "Channel ID where event was created",
+                                "example": "ch_xxxxxxxxxxxxxxxxxxxxx"
+                            },
+                            "channelName": {
+                                "type": "string",
+                                "description": "Channel name",
+                                "example": "payments"
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "Event title",
+                                "example": "Payment Received"
+                            },
+                            "createdAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "ISO 8601 timestamp of event creation",
+                                "example": "2025-01-15T10:30:00.000Z"
+                            }
+                        }
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique request identifier for debugging and support",
+                        "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    }
+                }
+            },
+            "ValidationError": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "error",
+                    "requestId"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "description": "Always false for error responses",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error type",
+                        "example": "Validation error"
+                    },
+                    "details": {
+                        "type": "array",
+                        "description": "Array of validation errors with paths and messages",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "message"
+                            ],
+                            "properties": {
+                                "path": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Path to the invalid field",
+                                    "example": [
+                                        "channelName"
+                                    ]
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "description": "Validation error message",
+                                    "example": "Required"
+                                },
+                                "code": {
+                                    "type": "string",
+                                    "description": "Error code for programmatic handling"
+                                }
+                            }
+                        }
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique request identifier"
+                    }
+                }
+            },
+            "UnauthorizedError": {
+                "type": "object",
+                "required": [
+                    "error",
+                    "message"
+                ],
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "Error type",
+                        "example": "Unauthorized"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Human-readable error message",
+                        "example": "Invalid or missing authentication credentials"
+                    }
+                }
+            },
+            "RateLimitError": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "error",
+                    "requestId"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Rate limit exceeded"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Too many requests. Please try again later."
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            },
+            "ServerError": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "error",
+                    "requestId"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Failed to create event"
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Request ID for support reference"
+                    }
+                }
+            },
+            "IdentifyUserRequest": {
+                "type": "object",
+                "required": [
+                    "user_id"
+                ],
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255,
+                        "description": "Unique identifier for the user. This is your internal user ID.\nMust be consistent across identify calls for the same user.\n",
+                        "example": "user_123"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "Custom properties about the user. Any valid JSON structure is accepted.\nProperties are **replaced** on each identify call, not merged.\nCommon properties: email, name, plan, createdAt, etc.\n",
+                        "example": {
+                            "email": "john@example.com",
+                            "name": "John Doe",
+                            "plan": "pro",
+                            "signupDate": "2025-01-15"
+                        }
+                    },
+                    "aliases": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                        },
+                        "maxItems": 50,
+                        "description": "Array of alternative identifiers for this user (emails, usernames, external IDs).\nAliases allow you to reference users by multiple identifiers in your events.\nDuplicate aliases are silently ignored and returned in the response.\n",
+                        "example": [
+                            "john@example.com",
+                            "johndoe",
+                            "john.doe@company.com"
+                        ]
+                    }
+                }
+            },
+            "IdentifyUserResponse": {
+                "type": "object",
+                "required": [
+                    "success",
+                    "data",
+                    "requestId"
+                ],
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "description": "Indicates successful user identification",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "userId",
+                            "properties",
+                            "aliases",
+                            "updatedAt"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Unique identifier for this user identity record",
+                                "example": "user_identity_xxxxxxxxxxxxxxxxxxxxx"
+                            },
+                            "userId": {
+                                "type": "string",
+                                "description": "The user ID that was identified",
+                                "example": "user_123"
+                            },
+                            "properties": {
+                                "type": "object",
+                                "additionalProperties": true,
+                                "description": "User properties that were stored",
+                                "example": {
+                                    "email": "john@example.com",
+                                    "name": "John Doe",
+                                    "plan": "pro"
+                                }
+                            },
+                            "aliases": {
+                                "type": "object",
+                                "required": [
+                                    "created"
+                                ],
+                                "properties": {
+                                    "created": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Aliases that were successfully created",
+                                        "example": [
+                                            "john@example.com",
+                                            "johndoe"
+                                        ]
+                                    },
+                                    "failed": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "alias",
+                                                "reason"
+                                            ],
+                                            "properties": {
+                                                "alias": {
+                                                    "type": "string",
+                                                    "description": "The alias that failed to be created"
+                                                },
+                                                "reason": {
+                                                    "type": "string",
+                                                    "description": "Why the alias creation failed"
+                                                }
+                                            }
+                                        },
+                                        "description": "Aliases that failed to be created (only present if there were failures)",
+                                        "example": [
+                                            {
+                                                "alias": "duplicate@example.com",
+                                                "reason": "Alias already exists"
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "updatedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "ISO 8601 timestamp of when the identity was last updated",
+                                "example": "2025-01-15T10:30:00.000Z"
+                            }
+                        }
+                    },
+                    "requestId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Unique request identifier for debugging and support",
+                        "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    }
+                }
+            }
+        }
     }
-  }
 }

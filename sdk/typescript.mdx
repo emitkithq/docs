@@ -1,0 +1,248 @@
+---
+title: "TypeScript SDK"
+description: "Official TypeScript/JavaScript SDK for EmitKit"
+---
+
+## Overview
+
+The EmitKit TypeScript/JavaScript SDK provides a type-safe, developer-friendly interface for monitoring critical product moments and sending real-time alerts.
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="Type-Safe" icon="shield-check">
+    Full TypeScript support with auto-generated types
+  </Card>
+  <Card title="Zero Dependencies" icon="feather">
+    No external runtime dependencies, minimal bundle size
+  </Card>
+  <Card title="Error Handling" icon="exclamation-triangle">
+    Type-safe error classes with detailed information
+  </Card>
+  <Card title="Rate Limiting" icon="gauge">
+    Automatic rate limit tracking and handling
+  </Card>
+  <Card title="Idempotency" icon="repeat">
+    Built-in support for safe retries
+  </Card>
+  <Card title="Tree-Shakeable" icon="tree">
+    Optimized bundle size with ES modules
+  </Card>
+</CardGroup>
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @emitkit/js
+```
+
+```bash pnpm
+pnpm add @emitkit/js
+```
+
+```bash yarn
+yarn add @emitkit/js
+```
+
+</CodeGroup>
+
+## Basic Usage
+
+```typescript
+import { EmitKit } from '@emitkit/js';
+
+const client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');
+
+// Create an event
+const result = await client.events.create({
+  channelName: 'payments',
+  title: 'Payment Received',
+  metadata: { amount: 99.99 }
+});
+
+console.log('Event ID:', result.data.id);
+console.log('Rate limit remaining:', result.rateLimit.remaining);
+```
+
+## Configuration
+
+### Basic Configuration
+
+```typescript
+const client = new EmitKit('your_api_key');
+```
+
+### Advanced Configuration
+
+```typescript
+const client = new EmitKit('your_api_key', {
+  // Custom base URL (for self-hosted instances)
+  baseUrl: 'https://api.your-domain.com',
+
+  // Request timeout in milliseconds (default: 30000)
+  timeout: 60000,
+
+  // Custom fetch implementation
+  fetch: customFetch
+});
+```
+
+## Methods
+
+### events.create()
+
+Create a new event and optionally send notifications.
+
+**Parameters:**
+- `channelName` (string, required): Channel name (auto-creates if doesn't exist)
+- `title` (string, required): Event title
+- `description` (string, optional): Event description
+- `icon` (string, optional): Single emoji icon
+- `tags` (string[], optional): Array of tags
+- `metadata` (object, optional): Custom JSON metadata
+- `userId` (string | null, optional): User identifier
+- `notify` (boolean, optional): Send push notification to connected devices (default: true)
+- `displayAs` ('message' | 'notification', optional): Display style
+- `source` (string, optional): Source identifier
+
+**Options:**
+- `idempotencyKey` (string): For safe retries
+- `timeout` (number): Request timeout override
+- `headers` (object): Additional headers
+
+**Returns:** `Promise<EmitKitResponse>`
+
+```typescript
+const result = await client.events.create({
+  channelName: 'payments',
+  title: 'Payment Received',
+  description: 'User upgraded to Pro plan',
+  icon: '💰',
+  tags: ['payment', 'upgrade'],
+  metadata: {
+    amount: 99.99,
+    currency: 'USD',
+    plan: 'pro'
+  },
+  userId: 'user_123',
+  notify: true,
+  displayAs: 'notification'
+});
+```
+
+### identify()
+
+Create or update a user identity with properties and aliases.
+
+**Parameters:**
+- `user_id` (string, required): Your internal user ID
+- `properties` (object, optional): Custom user properties
+- `aliases` (string[], optional): Alternative identifiers
+
+**Returns:** `Promise<EmitKitResponse<IdentifyUserResponse>>`
+
+```typescript
+await client.identify({
+  user_id: 'user_123',
+  properties: {
+    email: 'john@example.com',
+    name: 'John Doe',
+    plan: 'pro'
+  },
+  aliases: ['john@example.com', 'johndoe']
+});
+```
+
+## Response Types
+
+### EmitKitResponse
+
+```typescript
+interface EmitKitResponse<T = any> {
+  data: T;                    // Response data
+  rateLimit: RateLimitInfo;   // Rate limit info
+  requestId: string;          // Request ID for debugging
+  wasReplayed: boolean;       // Idempotent replay flag
+}
+```
+
+### RateLimitInfo
+
+```typescript
+interface RateLimitInfo {
+  limit: number;      // Max requests allowed
+  remaining: number;  // Remaining requests
+  reset: number;      // Unix timestamp when limit resets
+  resetIn: number;    // Milliseconds until reset
+}
+```
+
+## Error Handling
+
+The SDK provides type-safe error classes for different error scenarios:
+
+```typescript
+import {
+  EmitKit,
+  EmitKitError,
+  RateLimitError,
+  ValidationError
+} from '@emitkit/js';
+
+try {
+  await client.events.create({...});
+} catch (error) {
+  if (error instanceof RateLimitError) {
+    console.log('Rate limit exceeded!');
+    console.log(`Retry in ${error.rateLimit.resetIn}ms`);
+  } else if (error instanceof ValidationError) {
+    console.log('Validation failed:');
+    error.validationErrors.forEach(err => {
+      console.log(`- ${err.path.join('.')}: ${err.message}`);
+    });
+  } else if (error instanceof EmitKitError) {
+    console.log(`API Error ${error.statusCode}:`, error.message);
+    console.log('Request ID:', error.requestId);
+  }
+}
+```
+
+See [Error Handling](/sdk/error-handling) for detailed documentation.
+
+## Rate Limit Tracking
+
+Access rate limit information from responses:
+
+```typescript
+const result = await client.events.create({...});
+
+console.log(result.rateLimit);
+// {
+//   limit: 100,
+//   remaining: 95,
+//   reset: 1733270400,
+//   resetIn: 45000
+// }
+
+// Access last known rate limit
+console.log(client.rateLimit);
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Creating Events" icon="bolt" href="/sdk/events">
+    Learn about event creation and metadata
+  </Card>
+  <Card title="User Identity" icon="user" href="/sdk/identify">
+    Identify users and manage aliases
+  </Card>
+  <Card title="Error Handling" icon="shield-exclamation" href="/sdk/error-handling">
+    Handle errors and rate limits
+  </Card>
+  <Card title="Advanced Features" icon="sparkles" href="/sdk/advanced">
+    Idempotency, retries, and more
+  </Card>
+</CardGroup>

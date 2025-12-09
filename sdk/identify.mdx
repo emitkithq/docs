@@ -1,0 +1,34 @@
+---
+title: "User Identification"
+description: "Identify users and manage aliases"
+---
+
+## Identifying Users
+
+Create or update user identities with custom properties:
+
+```typescript
+await client.identify({
+  user_id: 'user_123',
+  properties: {
+    email: 'john@example.com',
+    name: 'John Doe',
+    plan: 'pro'
+  },
+  aliases: ['john@example.com', 'johndoe']
+});
+```
+
+## Using Aliases
+
+Reference users by any alias in events:
+
+```typescript
+await client.events.create({
+  channelName: 'activity',
+  title: 'User Logged In',
+  userId: 'john@example.com',  // ← Alias works!
+});
+```
+
+See [TypeScript SDK](/sdk/typescript) for complete documentation.

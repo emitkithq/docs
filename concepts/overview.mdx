@@ -1,0 +1,27 @@
+---
+title: "Core Concepts"
+description: "Understanding EmitKit's architecture and design"
+---
+
+## What is EmitKit?
+
+EmitKit is an event streaming and notification platform focused on **awareness, not analysis**. It monitors critical product moments - signups, cancellations, payments - and alerts you in real-time.
+
+Unlike analytics platforms that track everything, EmitKit focuses on pivotal business events that matter.
+
+## Architecture
+
+- **Organizations**: Top-level accounts
+- **Projects**: Individual products or applications within an organization
+- **Channels**: Event categories (payments, user-activity, etc.)
+- **Events**: Individual occurrences with metadata
+
+## Key Features
+
+- Real-time push notifications (PWA and browser)
+- Multi-tenancy support (organizations and projects)
+- Webhook triggers with HMAC signatures
+- Channel-based event organization
+- Type-safe TypeScript SDK
+
+See [Events](/concepts/events) for more details.

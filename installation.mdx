@@ -1,0 +1,54 @@
+---
+title: "Installation"
+description: "Install and set up the EmitKit SDK"
+---
+
+## Installation
+
+Install the EmitKit TypeScript/JavaScript SDK using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install @emitkit/js
+```
+
+```bash pnpm
+pnpm add @emitkit/js
+```
+
+```bash yarn
+yarn add @emitkit/js
+```
+
+</CodeGroup>
+
+## Requirements
+
+- Node.js 16+ or modern browser
+- TypeScript 4.5+ (optional, but recommended)
+
+## Basic Setup
+
+```typescript
+import { EmitKit } from '@emitkit/js';
+
+const client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Send your first event in 5 minutes
+  </Card>
+  <Card title="SDK Documentation" icon="book" href="/sdk/typescript">
+    Learn about all SDK features
+  </Card>
+  <Card title="Self-Hosting" icon="server" href="/self-hosting/overview">
+    Deploy your own instance
+  </Card>
+  <Card title="API Reference" icon="terminal" href="/api-reference/introduction">
+    Complete API documentation
+  </Card>
+</CardGroup>

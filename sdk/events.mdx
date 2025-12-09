@@ -1,0 +1,37 @@
+---
+title: "Creating Events"
+description: "Learn how to create and manage events with the SDK"
+---
+
+## Creating Events
+
+Use the `events.create()` method to send events to EmitKit:
+
+```typescript
+await client.events.create({
+  channelName: 'payments',
+  title: 'Payment Received',
+  description: 'User upgraded to Pro plan',
+  icon: '💰',
+  metadata: {
+    amount: 99.99,
+    currency: 'USD'
+  }
+});
+```
+
+## With User Tracking
+
+```typescript
+await client.events.create({
+  channelName: 'user-activity',
+  title: 'User Signed Up',
+  userId: 'user_123',
+  metadata: {
+    email: 'user@example.com',
+    plan: 'free'
+  }
+});
+```
+
+See [TypeScript SDK](/sdk/typescript) for complete documentation.

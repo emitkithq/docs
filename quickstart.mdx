@@ -1,80 +1,254 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Get started with EmitKit in under 5 minutes"
 ---
 
-## Get started in three steps
+## Get Started in 3 Steps
 
-Get your documentation site running locally and make your first customization.
+Monitor your first critical product moment and get instant alerts.
 
-### Step 1: Set up your local environment
+### Step 1: Get an API Key
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+<Steps>
+  <Step title="Sign up or self-host">
+    You'll need an EmitKit API key to get started. You can either:
+    - Sign up for a hosted account at [emitkit.com](https://emitkit.com)
+    - [Self-host EmitKit](/self-hosting/overview) on your own infrastructure
+  </Step>
 
-### Step 2: Deploy your changes
+  <Step title="Create an API key">
+    1. Log into your dashboard
+    2. Navigate to Settings → API Keys
+    3. Click "Create API Key"
+    4. Copy your API key (it starts with `emitkit_`)
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    <Note>
+      Keep in mind that API keys are scoped to organizations and projects.
+    </Note>
+  </Step>
+</Steps>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+### Step 2: Install the SDK
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+<CodeGroup>
 
-### Step 3: Go live
+```bash npm
+npm install @emitkit/js
+```
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+```bash pnpm
+pnpm add @emitkit/js
+```
 
-## Next steps
+```bash yarn
+yarn add @emitkit/js
+```
 
-Now that you have your docs running, explore these key features:
+</CodeGroup>
+
+### Step 3: Send Your First Event
+
+<CodeGroup>
+
+```typescript TypeScript
+import { EmitKit } from '@emitkit/js';
+
+// Initialize the client
+const client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');
+
+// Send an event
+const result = await client.events.create({
+  channelName: 'general',
+  title: 'Hello from EmitKit!',
+  description: 'My first event',
+  icon: '👋'
+});
+
+console.log('Event created:', result.data.id);
+```
+
+```javascript JavaScript
+const { EmitKit } = require('@emitkit/js');
+
+// Initialize the client
+const client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');
+
+// Send an event
+const result = await client.events.create({
+  channelName: 'general',
+  title: 'Hello from EmitKit!',
+  description: 'My first event',
+  icon: '👋'
+});
+
+console.log('Event created:', result.data.id);
+```
+
+</CodeGroup>
+
+<Check>
+  **Success!** You've sent your first event. You should see it in your EmitKit dashboard immediately.
+</Check>
+
+## Next Steps
+
+Now that you've sent your first event, explore more features:
 
 <CardGroup cols={2}>
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
+<Card title="Track Users" icon="user" href="/sdk/identify">
+  Identify users and track events by user ID
 </Card>
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
+<Card title="Add Metadata" icon="database" href="/sdk/events">
+  Attach custom data to your events
 </Card>
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
+<Card title="Error Handling" icon="shield-exclamation" href="/sdk/error-handling">
+  Handle errors and rate limits properly
 </Card>
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
+<Card title="API Reference" icon="code" href="/api-reference/introduction">
+  Explore the full API documentation
 </Card>
 
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Common Patterns
+
+### Monitor Critical Events
+
+```typescript
+import { EmitKit } from '@emitkit/js';
+
+const client = new EmitKit('your_api_key');
+
+// Get alerted when a user signs up
+await client.events.create({
+  channelName: 'signups',
+  title: 'New user signed up',
+  userId: 'user_123',
+  metadata: {
+    email: 'user@example.com',
+    source: 'google',
+    plan: 'free'
+  }
+});
+```
+
+### Send Notifications
+
+```typescript
+// Send a notification (displays prominently in the UI)
+await client.events.create({
+  channelName: 'alerts',
+  title: 'Payment Failed',
+  description: 'Credit card declined',
+  icon: '⚠️',
+  displayAs: 'notification',  // Shows as notification banner
+  notify: true
+});
+```
+
+### Track Payments
+
+```typescript
+await client.events.create({
+  channelName: 'payments',
+  title: 'Payment Received',
+  description: 'User upgraded to Pro plan',
+  icon: '💰',
+  userId: 'user_123',
+  tags: ['payment', 'upgrade'],
+  metadata: {
+    amount: 99.99,
+    currency: 'USD',
+    plan: 'pro',
+    transactionId: 'txn_abc123'
+  }
+});
+```
+
+### Identify Users
+
+```typescript
+// Create user identity with aliases
+await client.identify({
+  user_id: 'user_123',
+  properties: {
+    email: 'john@example.com',
+    name: 'John Doe',
+    plan: 'pro',
+    signupDate: '2025-01-15'
+  },
+  aliases: [
+    'john@example.com',  // Email
+    'johndoe',            // Username
+    'ext_12345'           // External system ID
+  ]
+});
+
+// Now you can reference the user by any alias
+await client.events.create({
+  channelName: 'activity',
+  title: 'User logged in',
+  userId: 'john@example.com',  // ← Alias works!
+});
+```
+
+## Environment Variables
+
+<Tip>
+  **Best Practice**: Store your API key in environment variables, not in your code.
+</Tip>
+
+<CodeGroup>
+
+```bash .env
+EMITKIT_API_KEY=emitkit_xxxxxxxxxxxxxxxxxxxxx
+```
+
+```typescript app.ts
+import { EmitKit } from '@emitkit/js';
+
+const client = new EmitKit(process.env.EMITKIT_API_KEY);
+```
+
+</CodeGroup>
+
+## Configuration Options
+
+```typescript
+const client = new EmitKit('your_api_key', {
+  // Custom base URL (for self-hosted instances)
+  baseUrl: 'https://api.your-domain.com',
+
+  // Request timeout in milliseconds
+  timeout: 30000,
+
+  // Custom fetch implementation (optional)
+  fetch: customFetch
+});
+```
+
+## Need Help?
+
+<CardGroup cols={2}>
+
+<Card title="Full SDK Documentation" icon="book" href="/sdk/typescript">
+  Learn about all SDK features and capabilities
+</Card>
+
+<Card title="API Reference" icon="terminal" href="/api-reference/introduction">
+  Complete API endpoint documentation
+</Card>
+
+<Card title="Self-Hosting Guide" icon="server" href="/self-hosting/overview">
+  Deploy your own EmitKit instance
+</Card>
+
+<Card title="Community Support" icon="comments" href="https://github.com/emitkithq/emitkit/discussions">
+  Get help from the community
+</Card>
+
+</CardGroup>
