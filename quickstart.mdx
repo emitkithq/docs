@@ -139,13 +139,12 @@ await client.events.create({
 ### Send Notifications
 
 ```typescript
-// Send a notification (displays prominently in the UI)
+// Send a notification
 await client.events.create({
   channelName: 'alerts',
   title: 'Payment Failed',
   description: 'Credit card declined',
   icon: '⚠️',
-  displayAs: 'notification',  // Shows as notification banner
   notify: true
 });
 ```

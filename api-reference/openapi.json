@@ -47,7 +47,7 @@
         "/v1/events": {
             "post": {
                 "summary": "Create Event",
-                "description": "Creates a new event and optionally sends push notifications to connected devices.\n\n## Channel Auto-Creation\n\nIf the specified channel doesn't exist, it will be automatically created.\nThis reduces setup complexity for simple integrations.\n\n## Notifications\n\nSet `notify: true` (default) to send push notifications to devices connected through PWA or browsers that have accepted notifications (e.g., Chrome).\n\n## Display Modes\n\n- `message`: Displayed as a chat-like message\n- `notification`: Displayed as a prominent notification banner\n",
+                "description": "Creates a new event and optionally sends push notifications to connected devices.\n\n## Channel Auto-Creation\n\nIf the specified channel doesn't exist, it will be automatically created.\nThis reduces setup complexity for simple integrations.\n\n## Notifications\n\nSet `notify: true` (default) to send push notifications to devices connected through PWA or browsers that have accepted notifications (e.g., Chrome).\n",
                 "operationId": "createEvent",
                 "tags": [
                     "Events"
@@ -61,7 +61,7 @@
                     {
                         "lang": "javascript",
                         "label": "With User ID",
-                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nawait client.events.create({\n  channelName: 'user-signups',\n  title: 'New User Registered',\n  userId: 'user_123',\n  notify: true,\n  displayAs: 'notification',\n  tags: ['signup', 'onboarding']\n});"
+                        "source": "import { EmitKit } from '@emitkit/js';\nconst client = new EmitKit('emitkit_xxxxxxxxxxxxxxxxxxxxx');\n\nawait client.events.create({\n  channelName: 'user-signups',\n  title: 'New User Registered',\n  userId: 'user_123',\n  notify: true,\n  tags: ['signup', 'onboarding']\n});"
                     },
                     {
                         "lang": "javascript",
@@ -125,8 +125,7 @@
                                             "transactionId": "txn_abc123"
                                         },
                                         "userId": "user_123",
-                                        "notify": true,
-                                        "displayAs": "notification"
+                                        "notify": true
                                     }
                                 },
                                 "userSignup": {
@@ -148,8 +147,7 @@
                                             "referrer": "google"
                                         },
                                         "userId": "user_456",
-                                        "notify": true,
-                                        "displayAs": "message"
+                                        "notify": true
                                     }
                                 }
                             }
@@ -754,22 +752,6 @@
                         "type": "boolean",
                         "default": true,
                         "description": "Whether to send push notifications to connected devices (PWA or browsers with accepted notifications).\nSet to false for silent event logging.\n"
-                    },
-                    "displayAs": {
-                        "type": "string",
-                        "enum": [
-                            "message",
-                            "notification"
-                        ],
-                        "description": "How the event should be displayed in the UI:\n- `message`: Chat-like message format\n- `notification`: Prominent notification banner\n",
-                        "example": "notification"
-                    },
-                    "source": {
-                        "type": "string",
-                        "maxLength": 100,
-                        "description": "Identifier for the source system that created this event",
-                        "example": "webhook",
-                        "default": "api"
                     }
                 }
             },

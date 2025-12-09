@@ -48,7 +48,6 @@ await client.events.create({
   title: 'New User Registered',
   userId: 'user_123',
   notify: true,
-  displayAs: 'notification',
   tags: ['signup', 'onboarding']
 });`
         },

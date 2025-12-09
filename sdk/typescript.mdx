@@ -104,7 +104,6 @@ Create a new event and optionally send notifications.
 - `metadata` (object, optional): Custom JSON metadata
 - `userId` (string | null, optional): User identifier
 - `notify` (boolean, optional): Send push notification to connected devices (default: true)
-- `displayAs` ('message' | 'notification', optional): Display style
 - `source` (string, optional): Source identifier
 
 **Options:**
@@ -127,8 +126,7 @@ const result = await client.events.create({
     plan: 'pro'
   },
   userId: 'user_123',
-  notify: true,
-  displayAs: 'notification'
+  notify: true
 });
 ```
 
